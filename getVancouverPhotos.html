@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Vancouver Photos every 30 seconds: Owner, Id Lat/Lon</title>
+<title>Vancouver Photos every 60 seconds: Owner, Id Lat/Lon</title>
 </head>
 <body>
 <ol>
@@ -15,10 +15,10 @@
     cache: false // turn off AJAX caching
   });
 function doIt() {
-  d = new Date();
+  var d = new Date();
   var now = Math.round(d.getTime() * 0.001);
   var n_str = now + '';
-  var twoMinutesAgo = now - 120;
+  var twoMinutesAgo = now - 1200;
   var twoMins_str = twoMinutesAgo +'';
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key=a3b9e1fec66dfb1797c7414dfbb81974"+
@@ -27,18 +27,20 @@ function doIt() {
               "&extras=date_taken,geo,url_sq,url_t,url_s,url_m,url_o,url_z,url_l"+
               "&max_upload_date="+n_str+
                "&page=1&sort=date-posted-desc&jsoncallback=?",
-  function(gsjs){ //gsjs is the JSON object from getsatisfaction
-    if (parseInt(gsjs.photos.total) == 0) {
-       $("#dummy").append("<li>No Vancouver geotagged photos at:"+d.toLocaleString()+"</li>");
+  function(flickrjs){ //flickrjs is the JSON object from flickr
+    if (parseInt(flickrjs.photos.total) == 0) {
+       $("#dummy").append("<li>No Vancouver geotagged photos at:"+d.toLocaleString()
+       +" pages:"+flickrjs.photos.pages+" status:"+flickrjs.stat+
+       "</li>");
     }
     else {
-      $.each(gsjs.photos.photo,function(i,photo) {
+      $.each(flickrjs.photos.photo,function(i,photo) {
        $("#dummy").append("<li>Owner:"+photo.owner+"ID:"+photo.id+"Lat:"+photo.latitude+"Long:"+
           photo.longitude+"</li>");
       });
     }
   });
-  setTimeout(doIt, 32000);
+  setTimeout(doIt, 60000);
 };
 setTimeout(doIt, 1000);
 })(jQuery);

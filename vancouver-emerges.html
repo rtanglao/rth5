@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Dynamic Vancouver Geotagged Cameraphone Pics</title>
+</head>
+<body>
+<div id="cm-example" style="width: 800px; height: 600px"></div>
+
+<script type="text/javascript"
+src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+var cacheObj = {};
+
+var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 22405});
+var map = new CM.Map('cm-example', cloudmade);
+
+// set centre to be Vancouver Centroid from Flickr:
+//http://www.flickr.com/places/info/9807
+map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
+
+function doIt() {
+  var d = new Date();
+  var now = Math.round(d.getTime() * 0.001);
+  var n_str = now + '';
+  var intervalToSearchForGeoTaggedPhotos = now - 1200; // 60 * 20 == 20 minutes ago
+  var intervalToSearchForGeoTaggedPhotos_str = intervalToSearchForGeoTaggedPhotos +'';
+  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  var woeID = '9807';
+  $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=10&min_upload_date="+intervalToSearchForGeoTaggedPhotos_str+
+            "&extras=date_taken,geo,url_sq,url_t,url_s,url_m,url_o,url_z,url_l"+
+            "&max_upload_date="+n_str+
+            "&page=1&sort=date-posted-desc&jsoncallback=?",
+  function(flickrjs){ //flickrjs is the JSON object from flickr
+    if (parseInt(flickrjs.photos.total) == 0) {
+       console.log("No Vancouver geotagged photos at:"+d.toLocaleString()
+       +" pages:"+flickrjs.photos.pages+" status:"+flickrjs.stat
+       );
+    }
+    else {
+      $.each(flickrjs.photos.photo,function(i,photo) {
+       var id = photo.id;
+       var lat = photo.latitude;
+       var lon = photo.longitude;
+       console.log("<a href=\"http://flickr.com/photos/"+photo.owner+
+       "/"+id+"/\"><img src=\""+photo.url_s+"\" /></a><p>Latitude:"+lat+" Longitude:"+
+         lon);
+       if (!cacheObj['id' + id]) {
+         var polygon = new CM.Polygon([new CM.LatLng(lat,lon)], "#FF0000", 4, 0.5);
+         map.addOverlay(polygon);
+         cacheObj['id' + id] = true;
+       }
+      });
+    }
+  });
+  setTimeout(doIt, 60000);
+};
+setTimeout(doIt, 1000);
+})(jQuery);
+//]]></script>
+
+</body>

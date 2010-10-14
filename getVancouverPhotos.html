@@ -26,7 +26,7 @@ function doIt() {
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
             "&per_page=10&min_upload_date="+intervalToSearchForGeoTaggedPhotos_str+
-            "&extras=date_taken,path_alias,geo,url_sq,url_t,url_s,url_m,url_o,url_z,url_l"+
+            "&extras=date_taken,geo,url_sq,url_t,url_s,url_m,url_o,url_z,url_l"+
             "&max_upload_date="+n_str+
             "&page=1&sort=date-posted-desc&jsoncallback=?",
   function(flickrjs){ //flickrjs is the JSON object from flickr
@@ -37,7 +37,7 @@ function doIt() {
     }
     else {
       $.each(flickrjs.photos.photo,function(i,photo) {
-        $("#dummy").append("<li><a href=\"http://www.flickr.com/photos/"+photo.pathalias+
+        $("#dummy").append("<li><a href=\"http://flickr.com/photos/"+photo.owner+
         "/"+photo.id+"/\"><img src=\""+photo.url_s+"\" /></a><p>Latitude:"+photo.latitude+" Longitude:"+
            photo.longitude+"</p></li>");
       });

@@ -37,7 +37,7 @@ function doIt() {
     }
     else {
       $.each(flickrjs.photos.photo,function(i,photo) {
-       $("#dummy").append("<li><a href='//flickr.com/photos/"+photo.owner+"/"+photo.id+"/'><img src='http://farm"+photo.farm+".static.flickr.com/"+photo.server+"/"+photo.id+"_"+photo.secret+"_m.jpg' /></a><p>Latitude:"+photo.latitude+" Longitude:"+
+       $("#dummy").append("<li><a href='//flickr.com/photos/"+photo.owner+"/"+photo.id+"/'><img src='"+photo.url_s+"' /></a><p>Latitude:"+photo.latitude+" Longitude:"+
           photo.longitude+"</p></li>");
       });
     }

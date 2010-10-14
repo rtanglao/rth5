@@ -36,7 +36,7 @@ function doIt() {
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
-            "&per_page=10&min_upload_date="+intervalToSearchForGeoTaggedPhotos_str+
+            "&per_page=250&min_upload_date="+intervalToSearchForGeoTaggedPhotos_str+
             "&extras=date_taken,geo,url_sq,url_t,url_s,url_m,url_o,url_z,url_l"+
             "&max_upload_date="+n_str+
             "&page=1&sort=date-posted-desc&jsoncallback=?",

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>2010 Gold Medal Geotagged Cameraphone Pics</title>
+<title>2010 Men's Gold Medal Hockey Day Geotagged Pics</title>
 </head>
 <body>
 <div id="progressindicator">
@@ -31,6 +31,9 @@ var map = new CM.Map('cm-example', cloudmade);
 //http://www.flickr.com/places/info/9807
 map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
 
+function top() {
+  plotPoints();
+};
 function plotPoints() {
   lat = latlon[plot_index]["lat"];
   lon = latlon[plot_index]["lon"];
@@ -46,11 +49,11 @@ function plotPoints() {
   map.addOverlay(polygon);
   plot_index++;
   if (plot_index < latlon.length) {
-    setTimeout(plotPoints,125);
+    setTimeout(plotPoints,35);
   }
 };
 
-function getLatLon(my_page) {
+function getLatLon(page) {
   var min_d = new Date('February 28, 2010 0:00:00 am PST');
   var min_s = Math.round(min_d.getTime() * 0.001);
   var min_str = min_s + '';
@@ -59,7 +62,7 @@ function getLatLon(my_page) {
   var max_str = max_s + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
   var woeID = '9807';
-  var page_str = my_page + '';
+  var page_str = page + '';
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
@@ -68,15 +71,15 @@ function getLatLon(my_page) {
             "&max_taken_date="+max_str+
             "&page="+page_str+"&sort=date-posted-asc&jsoncallback=?",
     function(flickrjs) { //flickrjs is the JSON object from flickr
-      console.log('page:'+my_page)
+     console.log('page:'+page)
       //console.log(flickrjs);
-      if (my_page == 1) {
+      if (page == 1) {
         total_pages = parseInt(flickrjs.photos.pages);
         total_photos = parseInt(flickrjs.photos.total);
       }
+      console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
       if (total_photos == 0) {
-         console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat
-         );
+         console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
       }
       else {
         $.each(flickrjs.photos.photo,function(i,photo) {
@@ -90,15 +93,17 @@ function getLatLon(my_page) {
           latlon[latlon_index]["lon"] = lon;
           latlon_index++;
         });
-      }  
+        if (page < total_pages) {
+          getLatLon(page + 1);
+        }
+        else {
+          top();
+        }
+      } 
     });
 };
-getLatLon(1);
-for (var i=2; i<=9;i++) {
-  getLatLon(i);
-}
 
-setTimeout(plotPoints,30000);
+getLatLon(1);
 
 })(jQuery);
 //]]></script>

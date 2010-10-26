@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>18 Cities geotagged pics</title>
+</head>
+<body>
+<canvas id="myDrawing" width="800" height="600">
+			<p>Your browser doesn't support canvas.</p>
+		</canvas>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="cross-domain-requests.js"></script>
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+var drawingCanvas = document.getElementById('myDrawing');
+var context = drawingCanvas.getContext('2d');
+
+function drawCircle(x,y,radius,colour) {
+  console.log("x:"+x+" y:"+y+" radius:"+radius+" colour:"+colour);
+  context.strokeStyle = "#000000";
+  context.fillStyle = colour;
+  context.beginPath();
+  context.arc(x,y,radius,0,Math.PI*2,true);
+  context.closePath();
+  context.stroke();
+  context.fill();
+};
+
+woeid_index_cache={};
+
+function getPhotos(woeID,row) {
+  var max_d = new Date();
+  var max_s = Math.round(max_d.getTime() * 0.001);
+  var max_str = max_s + '';
+  var min_d = max_s - (60 * 5); // 5 minutes ago
+  var min_str = min_d + '';
+  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=250&min_upload_date="+min_str+
+            "&extras=geo,url_s,date_upload"+
+            "&max_upload_date="+max_str+
+            "&page=1"+"&sort=date-posted-asc&jsoncallback=?",
+    function(flickrjs) { //flickrjs is the JSON object from flickr
+      total_photos = parseInt(flickrjs.photos.total);
+      console.log("Total Photos:"+total_photos);
+      if (total_photos == 0) {
+         console.log("NO geotagged PHOTOS for time:"+max_str+" WOEID:"+woeID+" uploaded in last 5 minutes"+" status:"+flickrjs.stat);
+      }
+      else {
+        $.each(flickrjs.photos.photo,function(i,photo) {
+          var id = photo.id;
+          var index = 'id'+woeID;
+          var photo_url = photo.url_s;
+          var dateupload = photo.dateupload;
+          var lon = photo.longitude;
+          var hours = new Date(parseInt(dateupload) * 1000).getHours();
+          console.log("woeid:"+woeID+ " id:"+id+" Date Uploaded"+dateupload+" hours:"+hours+" url:"+photo_url);
+          if (woeid_index_cache[index] == null) {
+            woeid_index_cache[index] = {};
+            woeid_index_cache[index]["x"] = -1;
+            woeid_index_cache[index]["id_array"] = [];
+          }
+          if (woeid_index_cache[index]["id_array"].indexOf(id) == -1) {
+            var url_str = "http://mkweb.bcgsc.ca/color_summarizer?xml=1&url="+photo_url+"&precision=medium";
+            requestCrossDomain(url_str, function(xml) {
+              pattern=/[0-9a-f]{6}/gi; // 6 hex digits, xml has lost its tags
+              var avg_rgb_str = "#"+xml.match(pattern)[24]; // kludge!
+              var avg_rgb = parseInt(avg_rgb_str);
+              console.log("Average colour:"+avg_rgb_str);
+              woeid_index_cache[index]["x"]++;
+              woeid_index_cache[index]["id_array"].push(id);
+              var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
+              drawCircle(x,row*32+16,16,avg_rgb_str);
+             }); // requestCrossDomain
+           }
+        }); // each flickrjs.photos.photo
+      } 
+    }); // getJSON
+};
+function get18CitiesPhotos() {
+    getPhotos("9807",0); // Vancouver
+    getPhotos("2487956",1); // San Francisco
+    getPhotos("2347591",2); // NYC
+    getPhotos("12592040",3); // Amsterdam
+    getPhotos("2475687",4); // Portland, Oregon
+    getPhotos("2345496",5); // Berlin
+    getPhotos("12597155",6); // Paris
+    getPhotos("44418",7); // London
+    getPhotos("20070333", 8); // Taipei
+    getPhotos("12686916", 9); // Beijing
+    getPhotos("26198094", 10); // Shanghai
+    getPhotos("12581062", 11); // Rio
+    getPhotos("4118",12); // Toronto
+    getPhotos("2379574",13); // Chicago
+    getPhotos("2490383",14); // Seattle
+    getPhotos("2442047",15); // Los Angeles
+    getPhotos("1118370",16); // Tokyo
+    getPhotos("3534",17); // Montreal
+
+    setTimeout(get18CitiesPhotos,1000*60);
+};
+
+get18CitiesPhotos();
+
+})(jQuery);
+//]]></script>
+
+</body>

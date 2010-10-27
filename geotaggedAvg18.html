@@ -31,6 +31,7 @@ function drawCircle(x,y,radius,colour) {
 woeid_index_cache={};
 
 function getPhotos(woeID,row,name) {
+  var y = row*32+16;
   var max_d = new Date();
   var index = 'id'+woeID;
   var max_s = Math.round(max_d.getTime() * 0.001);
@@ -39,26 +40,30 @@ function getPhotos(woeID,row,name) {
   var min_str = min_d + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
   var hh,mm;
-  h=max_d.getHours();
+  var h = max_d.getHours();
   if (h<10) { 
     hh = "0"+h;
   }
   else {
     hh = h + "";
   }
-  m=max_d.getMinutes();
+  var m =max_d.getMinutes();
   if (m<10) { 
     mm = "0"+m;
   }
   else {
     mm = m + "";
   }
-  if (woeid_index_cache[index] == null) {
-    var y = row*32+16;
-    context.fillStyle    = "#ffffff";
+  if (woeid_index_cache[index] == null) {    
+    context.fillStyle    = "white";
     context.fillRect(800, y, 920-800, 20);
     context.textBaseline = "top";
-    context.fillStyle    = '#000000';
+    if (m % 2) {
+      context.fillStyle    = 'black';
+    }
+    else {
+      context.fillStyle    = 'red';
+    }
     context.fillText(name+" "+hh+":"+mm,800,y);
   }
   
@@ -74,6 +79,18 @@ function getPhotos(woeID,row,name) {
       console.log("Total Photos:"+total_photos);
       if (total_photos == 0) {
          console.log("NO geotagged PHOTOS for time:"+max_str+" WOEID:"+woeID+" uploaded in last 5 minutes"+" status:"+flickrjs.stat);
+         if (woeid_index_cache[index] != null) {  
+           context.fillStyle    = "white";
+           context.fillRect(800, y, 920-800, 20);
+           context.textBaseline = "top";
+           if (m % 2) {
+             context.fillStyle    = 'green';
+           }
+           else {
+             context.fillStyle    = 'orange';
+           }
+           context.fillText(name+" "+hh+":"+mm,800,y);
+         }
       }
       else {
         $.each(flickrjs.photos.photo,function(i,photo) {

@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<title>18 Cities geotagged pics</title>
+<title>18 Cities Real Time Average Color of Geotagged flickr</title>
 </head>
 <body>
-<canvas id="myDrawing" width="800" height="600">
+<canvas id="myDrawing" width="920" height="600">
 			<p>Your browser doesn't support canvas.</p>
 		</canvas>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
@@ -30,13 +30,38 @@ function drawCircle(x,y,radius,colour) {
 
 woeid_index_cache={};
 
-function getPhotos(woeID,row) {
+function getPhotos(woeID,row,name) {
   var max_d = new Date();
+  var index = 'id'+woeID;
   var max_s = Math.round(max_d.getTime() * 0.001);
   var max_str = max_s + '';
   var min_d = max_s - (60 * 5); // 5 minutes ago
   var min_str = min_d + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  var hh,mm;
+  h=max_d.getHours();
+  if (h<10) { 
+    hh = "0"+h;
+  }
+  else {
+    hh = h + "";
+  }
+  m=max_d.getMinutes();
+  if (m<10) { 
+    mm = "0"+m;
+  }
+  else {
+    mm = m + "";
+  }
+  if (woeid_index_cache[index] == null) {
+    var y = row*32+16;
+    context.fillStyle    = "#ffffff";
+    context.fillRect(800, y, 920-800, 20);
+    context.textBaseline = "top";
+    context.fillStyle    = '#000000';
+    context.fillText(name+" "+hh+":"+mm,800,y);
+  }
+  
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
@@ -53,7 +78,6 @@ function getPhotos(woeID,row) {
       else {
         $.each(flickrjs.photos.photo,function(i,photo) {
           var id = photo.id;
-          var index = 'id'+woeID;
           var photo_url = photo.url_s;
           var dateupload = photo.dateupload;
           var lon = photo.longitude;
@@ -74,7 +98,13 @@ function getPhotos(woeID,row) {
               woeid_index_cache[index]["x"]++;
               woeid_index_cache[index]["id_array"].push(id);
               var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
-              drawCircle(x,row*32+16,16,avg_rgb_str);
+              var y = row*32+16;
+              context.fillStyle    = avg_rgb_str;
+              context.fillRect(800, y, 920-800, 20);
+              context.strokeStyle    = "#ffffff";
+              context.textBaseline = "top";
+              context.strokeText(name+" "+hh+":"+mm,800,y);
+              drawCircle(x,y,16,avg_rgb_str);
              }); // requestCrossDomain
            }
         }); // each flickrjs.photos.photo
@@ -82,24 +112,24 @@ function getPhotos(woeID,row) {
     }); // getJSON
 };
 function get18CitiesPhotos() {
-    getPhotos("9807",0); // Vancouver
-    getPhotos("2487956",1); // San Francisco
-    getPhotos("2347591",2); // NYC
-    getPhotos("12592040",3); // Amsterdam
-    getPhotos("2475687",4); // Portland, Oregon
-    getPhotos("2345496",5); // Berlin
-    getPhotos("12597155",6); // Paris
-    getPhotos("44418",7); // London
-    getPhotos("20070333", 8); // Taipei
-    getPhotos("12686916", 9); // Beijing
-    getPhotos("26198094", 10); // Shanghai
-    getPhotos("12581062", 11); // Rio
-    getPhotos("4118",12); // Toronto
-    getPhotos("2379574",13); // Chicago
-    getPhotos("2490383",14); // Seattle
-    getPhotos("2442047",15); // Los Angeles
-    getPhotos("1118370",16); // Tokyo
-    getPhotos("3534",17); // Montreal
+    getPhotos("9807",0,"Vancouver");
+    getPhotos("2487956",1,"San Francisco");
+    getPhotos("2347591",2,"NYC");
+    getPhotos("12592040",3,"Amsterdam");
+    getPhotos("2475687",4,"Portland,OR");
+    getPhotos("2345496",5,"Berlin");
+    getPhotos("12597155",6,"Paris");
+    getPhotos("44418",7,"London");
+    getPhotos("20070333", 8,"Taipei");
+    getPhotos("12686916", 9,"Beijing");
+    getPhotos("2151849", 10,"Shanghai");
+    getPhotos("12581062", 11,"Rio de Janeiro");
+    getPhotos("4118",12,"Toronto");
+    getPhotos("2379574",13,"Chicago");
+    getPhotos("2490383",14,"Seattle");
+    getPhotos("2442047",15,"Los Angeles");
+    getPhotos("1118370",16,"Tokyo");
+    getPhotos("3534",17,"Montréal");
 
     setTimeout(get18CitiesPhotos,1000*60);
 };
@@ -110,3 +140,4 @@ get18CitiesPhotos();
 //]]></script>
 
 </body>
+</html>

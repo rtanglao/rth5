@@ -4,7 +4,7 @@
 <title>18 Cities Real Time Average Color of Geotagged flickr</title>
 </head>
 <body>
-<canvas id="myDrawing" width="920" height="600">
+<canvas id="myDrawing" width="960" height="600">
 			<p>Your browser doesn't support canvas.</p>
 		</canvas>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
@@ -72,7 +72,7 @@ function getPhotos(woeID,row,name) {
   }
   if (woeid_index_cache[index] == null) {    
     context.fillStyle    = "white";
-    context.fillRect(800, y, 920-800, 20);
+    context.fillRect(800, y, 960-800, 20);
     context.textBaseline = "top";
     if (m % 2) {
       context.fillStyle    = 'black';
@@ -94,10 +94,10 @@ function getPhotos(woeID,row,name) {
       total_photos = parseInt(flickrjs.photos.total);
       console.log("Total Photos:"+total_photos);
       if (total_photos == 0) {
-         console.log("NO geotagged PHOTOS for time:"+max_str+" name:"+name+" uploaded in last 5 minutes"+" status:"+flickrjs.stat);
+         console.log("NO geotagged PHOTOS for time:"+max_str+" name:"+name+" uploaded in last 40 minutes"+" status:"+flickrjs.stat);
          if (woeid_index_cache[index] != null) {  
            context.fillStyle    = "white";
-           context.fillRect(800, y, 920-800, 20);
+           context.fillRect(800, y, 960-800, 20);
            context.textBaseline = "top";
            if (m % 2) {
              context.fillStyle    = 'green';
@@ -105,7 +105,7 @@ function getPhotos(woeID,row,name) {
            else {
              context.fillStyle    = 'orange';
            }
-           context.fillText(name+" "+hh+":"+mm,800,y);
+           context.fillText(name+" "+hh+":"+mm+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
          }
       }
       else {
@@ -134,10 +134,10 @@ function getPhotos(woeID,row,name) {
               var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
               var y = row*32+16;
               context.fillStyle    = avg_rgb_str;
-              context.fillRect(800, y, 920-800, 20);
+              context.fillRect(800, y, 960-800, 20);
               context.strokeStyle    = "#ffffff";
               context.textBaseline = "top";
-              context.strokeText(name+" "+hh+":"+mm,800,y);
+              context.strokeText(name+" "+hh+":"+mm+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
               drawCircle(x,y,16,avg_rgb_str);
              }); // requestCrossDomain
            } // photoid_index

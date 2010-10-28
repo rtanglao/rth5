@@ -17,6 +17,22 @@
 var drawingCanvas = document.getElementById('myDrawing');
 var context = drawingCanvas.getContext('2d');
 
+function drawCross(x,y,color_index) {
+  if (color_index )  {
+    context.strokeStyle = "green";
+  }
+  else {
+    context.strokeStyle = "orange";
+  }
+  context.beginPath();
+  context.moveTo(x-8, y);
+  context.lineTo(x+8,y)
+  context.stroke();
+  context.beginPath();
+  context.moveTo(x, y-8);
+  context.lineTo(x,y+8);
+  context.stroke();
+};
 function drawCircle(x,y,radius,colour) {
   console.log("x:"+x+" y:"+y+" radius:"+radius+" colour:"+colour);
   context.strokeStyle = "#000000";
@@ -36,7 +52,7 @@ function getPhotos(woeID,row,name) {
   var index = 'id'+woeID;
   var max_s = Math.round(max_d.getTime() * 0.001);
   var max_str = max_s + '';
-  var min_d = max_s - (60 * 5); // 5 minutes ago
+  var min_d = max_s - (60 * 40); // 40 minutes ago
   var min_str = min_d + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
   var hh,mm;
@@ -78,7 +94,7 @@ function getPhotos(woeID,row,name) {
       total_photos = parseInt(flickrjs.photos.total);
       console.log("Total Photos:"+total_photos);
       if (total_photos == 0) {
-         console.log("NO geotagged PHOTOS for time:"+max_str+" WOEID:"+woeID+" uploaded in last 5 minutes"+" status:"+flickrjs.stat);
+         console.log("NO geotagged PHOTOS for time:"+max_str+" name:"+name+" uploaded in last 5 minutes"+" status:"+flickrjs.stat);
          if (woeid_index_cache[index] != null) {  
            context.fillStyle    = "white";
            context.fillRect(800, y, 920-800, 20);
@@ -99,13 +115,14 @@ function getPhotos(woeID,row,name) {
           var dateupload = photo.dateupload;
           var lon = photo.longitude;
           var hours = new Date(parseInt(dateupload) * 1000).getHours();
-          console.log("woeid:"+woeID+ " id:"+id+" Date Uploaded"+dateupload+" hours:"+hours+" url:"+photo_url);
+          console.log("name:"+name+ " id:"+id+" Date Uploaded"+dateupload+" hours:"+hours+" url:"+photo_url);
           if (woeid_index_cache[index] == null) {
             woeid_index_cache[index] = {};
             woeid_index_cache[index]["x"] = -1;
             woeid_index_cache[index]["id_array"] = [];
           }
-          if (woeid_index_cache[index]["id_array"].indexOf(id) == -1) {
+          var photoid_index = woeid_index_cache[index]["id_array"].indexOf(id);
+          if (photoid_index == -1) {
             var url_str = "http://mkweb.bcgsc.ca/color_summarizer?xml=1&url="+photo_url+"&precision=medium";
             requestCrossDomain(url_str, function(xml) {
               pattern=/[0-9a-f]{6}/gi; // 6 hex digits, xml has lost its tags
@@ -123,7 +140,12 @@ function getPhotos(woeID,row,name) {
               context.strokeText(name+" "+hh+":"+mm,800,y);
               drawCircle(x,y,16,avg_rgb_str);
              }); // requestCrossDomain
-           }
+           } // photoid_index
+           else {
+             var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
+             var y = row*32+16;
+             drawCross(x, y, m % 2);
+           } // photoid_index
         }); // each flickrjs.photos.photo
       } 
     }); // getJSON

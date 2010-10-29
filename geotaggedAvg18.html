@@ -14,6 +14,9 @@
   $.ajaxSetup({
     cache: false // turn off AJAX caching
   });
+if (typeof console === 'undefined' || !console.log) {
+  var console = { log: function () {}};
+};
 var drawingCanvas = document.getElementById('myDrawing');
 var context = drawingCanvas.getContext('2d');
 

@@ -55,7 +55,7 @@ function getPhotos(woeID,row,name) {
   var index = 'id'+woeID;
   var max_s = Math.round(max_d.getTime() * 0.001);
   var max_str = max_s + '';
-  var min_d = max_s - (60 * 40); // 40 minutes ago
+  var min_d = max_s - (60 * 20); // 20 minutes ago
   var min_str = min_d + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
   var hh,mm;
@@ -126,16 +126,25 @@ function getPhotos(woeID,row,name) {
           }
           var photoid_index = woeid_index_cache[index]["id_array"].indexOf(id);
           if (photoid_index == -1) {
+            woeid_index_cache[index]["x"]++;
+            woeid_index_cache[index]["id_array"].push(id);
+            var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
+            var y = row*32+16;
+            var rgb_str;
+            if (max_d.getSeconds() % 2) {
+              rgb_str = "#FF00CC";
+            }
+            else {
+              rgb_str = "#3300CC";
+            }
+            drawCircle(x,y,16,rgb_str);
+
             var url_str = "http://mkweb.bcgsc.ca/color_summarizer?xml=1&url="+photo_url+"&precision=medium";
             requestCrossDomain(url_str, function(xml) {
               pattern=/[0-9a-f]{6}/gi; // 6 hex digits, xml has lost its tags
               var avg_rgb_str = "#"+xml.match(pattern)[24]; // kludge!
               var avg_rgb = parseInt(avg_rgb_str);
               console.log("Average colour:"+avg_rgb_str);
-              woeid_index_cache[index]["x"]++;
-              woeid_index_cache[index]["id_array"].push(id);
-              var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
-              var y = row*32+16;
               context.fillStyle    = avg_rgb_str;
               context.fillRect(800, y, 960-800, 20);
               context.strokeStyle    = "#ffffff";
@@ -173,7 +182,7 @@ function get18CitiesPhotos() {
     getPhotos("1118370",16,"Tokyo");
     getPhotos("3534",17,"Montréal");
 
-    setTimeout(get18CitiesPhotos,1000*60);
+    setTimeout(get18CitiesPhotos,1000*30);
 };
 
 get18CitiesPhotos();

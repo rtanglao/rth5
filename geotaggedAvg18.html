@@ -173,7 +173,7 @@ function getPhotos(woeID,row,name) {
         }); // each flickrjs.photos.photo
       } 
     }); // getJSON
-  setTimeout(function () {getPhotos(woeID,row,name);}, 1000*10);
+  setTimeout(function () {getPhotos(woeID,row,name);}, 1000*5);
 };
 function get18CitiesPhotos() {
     getPhotos("9807",0,"Vancouver");

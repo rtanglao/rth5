@@ -55,10 +55,10 @@ function getPhotos(woeID,row,name) {
   var index = 'id'+woeID;
   var max_s = Math.round(max_d.getTime() * 0.001);
   var max_str = max_s + '';
-  var min_d = max_s - (60 * 20); // 20 minutes ago
+  var min_d = max_s - (60 * 15); // 15 minutes ago
   var min_str = min_d + '';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
-  var hh,mm;
+  var hh,mm,ss;
   var h = max_d.getHours();
   if (h<10) { 
     hh = "0"+h;
@@ -73,6 +73,13 @@ function getPhotos(woeID,row,name) {
   else {
     mm = m + "";
   }
+  var s =max_d.getSeconds();
+  if (s<10) { 
+    ss = "0"+s;
+  }
+  else {
+    ss = s + "";
+  }
   if (woeid_index_cache[index] == null) {    
     context.fillStyle    = "white";
     context.fillRect(800, y, 960-800, 20);
@@ -83,7 +90,7 @@ function getPhotos(woeID,row,name) {
     else {
       context.fillStyle    = 'red';
     }
-    context.fillText(name+" "+hh+":"+mm,800,y);
+    context.fillText(name+" "+hh+":"+mm+":"+ss,800,y);
   }
   
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
@@ -108,7 +115,7 @@ function getPhotos(woeID,row,name) {
            else {
              context.fillStyle    = 'orange';
            }
-           context.fillText(name+" "+hh+":"+mm+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
+           context.fillText(name+" "+hh+":"+mm+":"+ss+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
          }
       }
       else {
@@ -131,13 +138,18 @@ function getPhotos(woeID,row,name) {
             var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
             var y = row*32+16;
             var rgb_str;
-            if (max_d.getSeconds() % 2) {
+            if (s % 2) {
               rgb_str = "#FF00CC";
             }
             else {
               rgb_str = "#3300CC";
             }
             drawCircle(x,y,16,rgb_str);
+            context.fillStyle    = rgb_str;
+            context.fillRect(800, y, 960-800, 20);
+            context.strokeStyle    = "#ffffff";
+            context.textBaseline = "top";
+            context.strokeText(name+" "+hh+":"+mm+":"+ss+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
 
             var url_str = "http://mkweb.bcgsc.ca/color_summarizer?xml=1&url="+photo_url+"&precision=medium";
             requestCrossDomain(url_str, function(xml) {
@@ -149,7 +161,7 @@ function getPhotos(woeID,row,name) {
               context.fillRect(800, y, 960-800, 20);
               context.strokeStyle    = "#ffffff";
               context.textBaseline = "top";
-              context.strokeText(name+" "+hh+":"+mm+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
+              context.strokeText(name+" "+hh+":"+mm+":"+ss+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
               drawCircle(x,y,16,avg_rgb_str);
              }); // requestCrossDomain
            } // photoid_index
@@ -161,6 +173,7 @@ function getPhotos(woeID,row,name) {
         }); // each flickrjs.photos.photo
       } 
     }); // getJSON
+  setTimeout(function () {getPhotos(woeID,row,name);}, 1000*10);
 };
 function get18CitiesPhotos() {
     getPhotos("9807",0,"Vancouver");
@@ -181,8 +194,6 @@ function get18CitiesPhotos() {
     getPhotos("2442047",15,"Los Angeles");
     getPhotos("1118370",16,"Tokyo");
     getPhotos("3534",17,"Montréal");
-
-    setTimeout(get18CitiesPhotos,1000*30);
 };
 
 get18CitiesPhotos();

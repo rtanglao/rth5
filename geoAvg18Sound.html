@@ -189,7 +189,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
         }); // each flickrjs.photos.photo
       } 
     }); // getJSON
-  setTimeout(function () {getPhotos(woeID,row,name,++refresh_cycle);}, 1000*4);
+  setTimeout(function () {getPhotos(woeID,row,name,++refresh_cycle);}, 1000*2);
 };
 function get18CitiesPhotos() {
     getPhotos("9807",0,"Vancouver",0);

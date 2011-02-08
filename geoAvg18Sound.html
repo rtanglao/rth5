@@ -49,9 +49,11 @@ function drawCircle(x,y,radius,colour) {
 
 woeid_index_cache={};
 
+var noJoy_sound = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/no-joy.wav");
+var geo_sound =   new Audio("http://dl.dropbox.com/u/361757/SOUNDS/geo.wav");
+
 function getPhotos(woeID,row,name,refresh_cycle) {
-  var noJoy_sound = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/no-joy.wav");
-  var geo_sound =   new Audio("http://dl.dropbox.com/u/361757/SOUNDS/geo.wav");
+
   var y = row*32+16;
   var max_d = new Date();
   var index = 'id'+woeID;

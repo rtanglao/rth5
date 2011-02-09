@@ -112,7 +112,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
   else {
     ss = s + "";
   }
-  var sound_index = s % 10;
+  var sound_index = Math.floor(Math.random() * 10);
   if (woeid_index_cache[index] == null) {    
     context.fillStyle    = "white";
     context.fillRect(800, y, 960-800, 20);

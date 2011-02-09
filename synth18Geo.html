@@ -79,6 +79,18 @@ synth_sound[6] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp
 synth_sound[7] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo5.wav");
 synth_sound[8] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/1080BC2.WAV");
 synth_sound[9] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/108BC3.WAV");
+synth_sound[10] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo28.wav");
+synth_sound[11] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo122.wav");
+synth_sound[12] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo1222.wav");
+synth_sound[13] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo152.wav");
+synth_sound[14] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo158.wav");
+synth_sound[15] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo207.wav");
+synth_sound[16] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo249.wav");
+synth_sound[17] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo123.wav");
+synth_sound[18] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/SYNTH/mp3_demo124.wav");
+
+
+
 
 function getPhotos(woeID,row,name,refresh_cycle) {
 
@@ -112,7 +124,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
   else {
     ss = s + "";
   }
-  var sound_index = Math.floor(Math.random() * 10);
+  var sound_index = Math.floor(Math.random() * 19);
   if (woeid_index_cache[index] == null) {    
     context.fillStyle    = "white";
     context.fillRect(800, y, 960-800, 20);

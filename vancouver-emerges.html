@@ -24,6 +24,9 @@ var map = new CM.Map('cm-example', cloudmade);
 // set centre to be Vancouver Centroid from Flickr:
 //http://www.flickr.com/places/info/9807
 map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
+// disable all scrolling and dragging
+map.disableDragging();
+map.disableMouseZoom();
 
 function doIt() {
   var d = new Date();

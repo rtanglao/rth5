@@ -31,10 +31,12 @@ map.disableMouseZoom();
 function toggle_polygon(index,red_polygon, green_polygon) {
 
   if ((++index) % 2) {
-    map.addOverlay(red_polygon);
+    map.removeOverlay(red_polygon);
+    map.addOverlay(green_polygon);
   }
   else {
-    map.addOverlay(green_polygon);
+    map.removeOverlay(green_polygon);
+    map.addOverlay(red_polygon);
   }
   setTimeout(function () {toggle_polygon(index,red_polygon,green_polygon);},Math.floor(Math.random()*1000)+500);
 };

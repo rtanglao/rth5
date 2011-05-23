@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>Dynamic Vancouver Geotagged Cameraphone Pics III</title>
+<title>Dynamic San Francisco Geotagged Cameraphone Pics III</title>
 </head>
 <body>
 <div id="cm-example" style="width: 800px; height: 600px"></div>
@@ -19,9 +19,9 @@ var cacheObj = {};
 var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 22405});
 var map = new CM.Map('cm-example', cloudmade);
 
-// set centre to be Vancouver Centroid from Flickr:
-// http://www.flickr.com/places/info/9807
-map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
+// set centre to be San Francisco Centroid from Flickr:
+//http://www.flickr.com/places/info/2487956
+map.setCenter(new CM.LatLng(37.7792,-122.4201), 13);;
 // disable all scrolling and dragging
 map.disableDragging();
 map.disableMouseZoom();
@@ -57,7 +57,7 @@ function doGet() {
   var intervalToSearchForGeoTaggedPhotos = now - 1200; // 60 * 20 == 20 minutes ago
   var intervalToSearchForGeoTaggedPhotos_str = intervalToSearchForGeoTaggedPhotos +'';
   var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
-  var woeID = '9807';
+  var woeID = '2487956';
   $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
@@ -79,7 +79,6 @@ function doGet() {
        console.log("<a href=\"http://flickr.com/photos/"+photo.owner+
        "/"+id+"/\"><img src=\""+photo.url_s+"\" /></a><p>Latitude:"+lat+" Longitude:"+lon+"</p>");
        if (!cacheObj['id' + id]) {
-         console.log("photo:"+id+" not in cache");
          var polygons = [];
          polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 15, 0.5));
          polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 15, 0.5));

@@ -37,9 +37,9 @@ var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5
 var map = new CM.Map('rt-wmh2010ghd', cloudmade);
 
 map.setCenter(new CM.LatLng(49.2777, -123.10875), 14); // Canada Hockey Place
-map.addControl(new CM.LargeMapControl());
-map.addControl(new CM.ScaleControl());
-map.addControl(new CM.OverviewMapControl());
+// disable all scrolling and dragging
+map.disableDragging();
+map.disableMouseZoom();
 
 var sort_by = function(field, reverse, primer){
 

@@ -24,6 +24,15 @@ var latlon_index = 0;
 var plot_index = 0;
 var total_photos = 0;
 
+var min_d = new Date('February 28, 2010 0:00:00 am PST');
+var min_s = Math.round(min_d.getTime() * 0.001);
+var min_str = min_s + '';
+var max_d = new Date('February 28, 2010 11:59:59 pm PST');
+var max_s = Math.round(max_d.getTime() * 0.001);
+var max_str = max_s + '';
+var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+var woeID = '9807';
+
 var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 25524});
 var map = new CM.Map('rt-wmh2010ghd', cloudmade);
 
@@ -54,7 +63,9 @@ var sort_by = function(field, reverse, primer){
 };
 
 function top() {
+  $('title').text("2010 Men's Gold Medal Hockey Day Geotagged SORTING");
   latlon.sort(sort_by('datetaken', false));
+  $('title').text("2010 Men's Gold Medal Hockey Day Geotagged PLOTTING");
   plotPoints();
 };
 function toggle_polygon(index,polygons,circles) {
@@ -119,16 +130,8 @@ function plotPoints() {
 };
 
 function getLatLon(page) {
-  var min_d = new Date('February 28, 2010 0:00:00 am PST');
-  var min_s = Math.round(min_d.getTime() * 0.001);
-  var min_str = min_s + '';
-  var max_d = new Date('February 28, 2010 11:59:59 pm PST');
-  var max_s = Math.round(max_d.getTime() * 0.001);
-  var max_str = max_s + '';
-  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
-  var woeID = '9807';
   var page_str = page + '';
-  $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+ $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
             "&per_page=250&min_taken_date="+min_str+
@@ -141,6 +144,8 @@ function getLatLon(page) {
         total_pages = parseInt(flickrjs.photos.pages);
         total_photos = parseInt(flickrjs.photos.total);
       }
+      $('title').text("2010 Men's Gold Medal Hockey Day Geotagged Retrieving Page:"+page_str+" of:"+total_pages);
+
       console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
       if (total_photos == 0) {
          console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);

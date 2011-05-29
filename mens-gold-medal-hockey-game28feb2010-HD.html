@@ -10,7 +10,7 @@
 
 <script type="text/javascript"
 src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 
 
 <script type="text/javascript">//<![CDATA[
@@ -35,22 +35,62 @@ map.addControl(new CM.OverviewMapControl());
 function top() {
   plotPoints();
 };
+function toggle_polygon(index,polygons,circles) {
+
+  var current_index = ++index;
+
+  switch (current_index) {
+
+  case (1):
+    map.addOverlay(circles[current_index - 1]);
+    break;
+  case (2):
+  case (3):
+  case (4):
+    map.removeOverlay(circles[current_index - 2]);
+    map.addOverlay(circles[current_index-1]);
+    break;
+  case (5):
+    map.removeOverlay(circles[current_index - 2]);
+    map.addOverlay(polygons[(current_index - 2) % 2]);
+    break;
+  default:
+    map.removeOverlay(polygons[(current_index - 1) % 2]);
+    map.addOverlay(polygons[current_index % 2]);
+    break;
+  }
+  if (current_index == 1) {
+   setTimeout(function () {toggle_polygon(current_index,polygons,circles);},1000);
+  }
+  else {
+    if (current_index < 7) {
+      setTimeout(function () {toggle_polygon(current_index,polygons,circles);},500);
+    }
+  }
+};
+
 function plotPoints() {
   var lat = latlon[plot_index]["lat"];
   var lon = latlon[plot_index]["lon"];
-  var polygon;
-  if ((plot_index % 2) == 1) {
-    polygon = new CM.Polygon([new CM.LatLng(lat,lon)], "#FF0000", 4, 0.5);
-  }
-  else {
-    polygon = new CM.Polygon([new CM.LatLng(lat,lon)], "#FFFF00", 4, 0.5);
-  }
 
   console.log("Mapping Point:Latitude:"+lat+" Longitude:"+lon);
-  map.addOverlay(polygon);
+
+  setTimeout(function () {
+    var polygons = [];
+    polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 8, 0.5));
+    polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 8, 0.5));
+    var circles = [];
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  40, "blue", 5, 0.1));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  25, "darkgreen", 5, 0.2));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  22, "darkgreen", 5, 0.3));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  19, "darkgreen", 5, 0.4));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  15, "darkgreen", 5,0.5));
+    toggle_polygon(0,polygons,circles);
+   },500);
+
   plot_index++;
   if (plot_index < latlon.length) {
-    setTimeout(plotPoints,35);
+    setTimeout(plotPoints,250);
   }
 };
 
@@ -70,7 +110,7 @@ function getLatLon(page) {
             "&per_page=250&min_taken_date="+min_str+
             "&extras=geo"+
             "&max_taken_date="+max_str+
-            "&page="+page_str+"&sort=date-posted-asc&jsoncallback=?",
+            "&page="+page_str+"&sort=date-taken-asc&jsoncallback=?",
     function(flickrjs) { //flickrjs is the JSON object from flickr
       console.log('page:'+page)
       if (page == 1) {

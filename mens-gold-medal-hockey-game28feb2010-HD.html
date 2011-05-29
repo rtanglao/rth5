@@ -72,8 +72,10 @@ function toggle_polygon(index,polygons,circles) {
 function plotPoints() {
   var lat = latlon[plot_index]["lat"];
   var lon = latlon[plot_index]["lon"];
+  var datetaken = latlon[plot_index]["datetaken"];
+  $('title').text("2010 Men's Gold Medal Hockey Day Geotagged Photo:"+datetaken);
 
-  console.log("Mapping Point:Latitude:"+lat+" Longitude:"+lon);
+  console.log("Mapping Point:Latitude:"+lat+" Longitude:"+lon+" Taken:"+datetaken);
 
   setTimeout(function () {
     var polygons = [];
@@ -108,7 +110,7 @@ function getLatLon(page) {
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
             "&per_page=250&min_taken_date="+min_str+
-            "&extras=geo"+
+            "&extras=geo,date_taken"+
             "&max_taken_date="+max_str+
             "&page="+page_str+"&sort=date-taken-asc&jsoncallback=?",
     function(flickrjs) { //flickrjs is the JSON object from flickr
@@ -131,6 +133,7 @@ function getLatLon(page) {
           latlon[latlon_index] = {};
           latlon[latlon_index]["lat"] = lat;
           latlon[latlon_index]["lon"] = lon;
+          latlon[latlon_index]["datetaken"] = photo.datetaken;
           latlon_index++;
         });
         if (page < total_pages) {

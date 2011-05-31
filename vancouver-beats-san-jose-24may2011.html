@@ -65,40 +65,52 @@ var sort_by = function(field, reverse, primer){
 function top() {
   $('title').text("Vancouver beats San Jose 24May2011: SORTING");
   latlon.sort(sort_by('datetaken', false));
-  $('title').text("Vancouver beats San Jose 24May2011 PLOTTING");
+  $('title').text("Vancouver beats San Jose 24May2011: PLOTTING");
   plotPoints();
 };
+
+var toggle_funcs = new Array(6);
+toggle_funcs[1] = function (index,polygons,circles) {
+ map.addOverlay(circles[index - 1]);
+};
+
+var toggle234 = function(index,polygons,circles) {
+  map.removeOverlay(circles[index - 2]);
+  map.addOverlay(circles[index-1]);
+};
+
+toggle_funcs[2] = toggle234;
+toggle_funcs[3] = toggle234;
+toggle_funcs[4] = toggle234;
+
+toggle_funcs[5] = function(index, polygons,circles) {
+  map.removeOverlay(circles[index - 2]);
+  map.addOverlay(polygons[(index - 2) % 2]);
+};
+
+var toggle_default = function(index, polygons,circles) {
+  map.removeOverlay(polygons[(index - 1) % 2]);
+  map.addOverlay(polygons[index % 2]);
+};
+
 function toggle_polygon(index,polygons,circles) {
 
-  var current_index = ++index;
-
-  switch (current_index) {
-
-  case (1):
-    map.addOverlay(circles[current_index - 1]);
-    break;
-  case (2):
-  case (3):
-  case (4):
-    map.removeOverlay(circles[current_index - 2]);
-    map.addOverlay(circles[current_index-1]);
-    break;
-  case (5):
-    map.removeOverlay(circles[current_index - 2]);
-    map.addOverlay(polygons[(current_index - 2) % 2]);
-    break;
-  default:
-    map.removeOverlay(polygons[(current_index - 1) % 2]);
-    map.addOverlay(polygons[current_index % 2]);
-    break;
-  }
-  if (current_index == 1) {
-   setTimeout(function () {toggle_polygon(current_index,polygons,circles);},1000);
+  var timeout;
+  ++index;
+  if (index == 1) {
+    timeout = 1000;
   }
   else {
-    if (current_index < 7) {
-      setTimeout(function () {toggle_polygon(current_index,polygons,circles);},500);
-    }
+    timeout = 500;
+  }
+  if (index < 6) {
+    toggle_funcs[index](index, polygons, circles);
+  }
+  else {
+    toggle_default(index, polygons, circles);
+  }
+  if (index < 7) {
+    setTimeout(function () {toggle_polygon(index,polygons,circles);},timeout);
   }
 };
 

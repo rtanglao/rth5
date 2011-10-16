@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Roland's 2010 Commute</title>
+</head>
+<body>
+<div id="cm-example" style="width: 800px; height: 600px"></div>
+
+<script type="text/javascript" src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+var cacheObj = {};
+
+var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 22405});
+var map = new CM.Map('cm-example', cloudmade);
+
+// set centre to be Vancouver Centroid from Flickr:
+// http://www.flickr.com/places/info/9807
+map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
+// disable all scrolling and dragging
+map.disableDragging();
+map.disableMouseZoom();
+var bounds = map.getBounds();
+var sw = bounds.getSouthWest();
+var ne = bounds.getNorthEast();
+var ne_lat = ne.lat();
+var ne_lng = ne.lng();
+var sw_lat = sw.lat();
+var sw_lng = sw.lng();
+
+var nw = new CM.LatLng(ne_lat,sw_lng);
+var se = new CM.LatLng(sw_lat,ne_lng);
+console.log("NE lat:"+ne.lat()+" long:"+ne.lng());
+console.log("SW lat:"+sw.lat()+" long:"+sw.lng());
+
+var first_polygon = new CM.Polygon([nw,ne,se,sw],  "fuchsia", 2, 0.5);
+var second_polygon = new CM.Polygon([nw,ne,se,sw],  "darkorange", 2, 0.5);
+
+function toggle_heartbeat_polygon(index) {
+  ++index;
+  if (index % 2) {
+    map.removeOverlay(first_polygon);
+    map.addOverlay(second_polygon);
+  }
+  else {
+    map.removeOverlay(second_polygon);
+    map.addOverlay(first_polygon);
+  }
+  setTimeout(function () {toggle_heartbeat_polygon(index);},1000);
+};
+
+
+function mysqlTimeStampToDate(timestamp) {
+  // from http://snippets.dzone.com/posts/show/4132
+  //function parses mysql datetime string and returns javascript Date object
+  //input has to be in this format: 2007-06-05 15:26:02
+  var regex=/^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9]) (?:([0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$/;
+  var parts=timestamp.replace(regex,"$1 $2 $3 $4 $5 $6").split(' ');
+  return new Date(parts[0],parts[1]-1,parts[2],parts[3],parts[4],parts[5]);
+};
+
+function toggle_polygon(index,polygons,circles) {
+
+  var current_index = (++index);
+
+  switch (current_index) {
+
+  case (1):
+  case (2):
+  case (3):
+  case (4):
+    map.removeOverlay(circles[current_index - 1]);
+    map.addOverlay(circles[current_index]);
+    break;
+  case (5):
+    map.removeOverlay(circles[current_index - 1]);
+    map.addOverlay(polygons[(current_index - 1) % 2]);
+    break;
+  default:
+    map.removeOverlay(polygons[current_index % 2]);
+    map.addOverlay(polygons[(current_index + 1) % 2]);
+    break;
+  }
+  setTimeout(function () {toggle_polygon(current_index,polygons,circles);},500);
+};
+var num_pages = 200;
+function doGet(page) {
+  var min_d = new Date('January 1, 2010 0:00:00 am PST');
+  var min_s = Math.round(min_d.getTime() * 0.001);
+  var min_str = min_s + '';
+  var max_d = new Date('December 31, 2010 11:59:59 pm PST');
+  var max_s = Math.round(max_d.getTime() * 0.001);
+  var max_str = max_s + '';
+  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  var woeID = '9807';
+  $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search"+
+            "&user_id=35034347371@N01"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=1&min_taken_date="+min_str+
+            "&max_taken_date="+max_str+
+            "&tags=cameraphone"+
+            "&extras=date_taken,geo,url_s"+
+            "&page="+page+"&sort=date-taken-asc&jsoncallback=?",
+  function(flickrjs){ //flickrjs is the JSON object from flickr
+    if (parseInt(flickrjs.photos.total) == 0) {
+       console.log("No Vancouver geotagged photos at:"+d.toLocaleString()
+       +" pages:"+flickrjs.photos.pages+" status:"+flickrjs.stat
+       );
+    }
+    else {
+      num_pages = flickrjs.photos.pages;
+      $.each(flickrjs.photos.photo,function(i,photo) {
+       var id = photo.id;
+       var lat = photo.latitude;
+       var lon = photo.longitude;
+       console.log("<a href=\"http://flickr.com/photos/"+photo.owner+
+       "/"+id+"/\"><img src=\""+photo.url_s+"\" /></a><p>Latitude:"+lat+" Longitude:"+lon+"</p>");
+       var datetaken = mysqlTimeStampToDate(photo.datetaken);
+       var hourtaken = datetaken.getHours();
+       var dayofweek = datetaken.getDay();
+       var inCommuttingHours = false;
+       var mondayToFriday = false;
+       if (hourtaken >= 7 && hourtaken <= 10) {
+         inCommuttingHours = true;
+       }
+       if (hourtaken >= 14 && hourtaken <= 18) {
+         inCommuttingHours = true;
+       }
+       if (dayofweek >= 1 && dayofweek <=5) {
+         mondayToFriday = true;
+       }
+       if (!cacheObj['id' + id] && inCommuttingHours && mondayToFriday) {
+         console.log("photo:"+id+" not in cache; dayofweek:"+dayofweek+"; hourtaken:"+hourtaken);
+         var polygons = [];
+         polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 2, 0.5));
+         polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 2, 0.5));
+         var circles = [];
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2, "blue", 5, 0.1));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, "blue", 5, 0.2));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  30, "blue", 5, 0.3));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, "blue", 5, 0.4));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2, "blue", 5, 0.5));
+         
+         map.addOverlay(circles[0]);
+         cacheObj['id' + id] = true;
+         setTimeout(function () {toggle_polygon(0,polygons,circles);},500);
+       }
+      });
+    }
+  });
+};
+
+function doIt(page) {
+  $.when (doGet(page))
+    .done(function() {
+      if (++page <= num_pages) {
+        setTimeout(function() {doIt(page);},5000);
+      }
+    })
+};
+
+map.addOverlay(first_polygon);
+setTimeout(function () {toggle_heartbeat_polygon(0);},1000);
+setTimeout(function() {doIt(1);},1000);
+})(jQuery);
+//]]></script>
+
+</body>

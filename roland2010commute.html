@@ -89,6 +89,7 @@ function toggle_polygon(index,polygons,circles) {
   setTimeout(function () {toggle_polygon(current_index,polygons,circles);},500);
 };
 var num_pages = 200;
+var num_commutePics = 0;
 function doGet(page) {
   var min_d = new Date('January 1, 2010 0:00:00 am PST');
   var min_s = Math.round(min_d.getTime() * 0.001);
@@ -141,11 +142,19 @@ function doGet(page) {
          polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 2, 0.5));
          polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 2, 0.5));
          var circles = [];
-         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2, "blue", 5, 0.1));
-         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, "blue", 5, 0.2));
-         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  30, "blue", 5, 0.3));
-         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, "blue", 5, 0.4));
-         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2, "blue", 5, 0.5));
+         var colour_of_new_commute_pic = "orange";
+         num_commutePics++;
+         if (num_commutePics % 3 == 0) {
+           colour_of_new_commute_pic = "blue";
+         }
+         if (num_commutePics % 3 == 1) {
+           colour_of_new_commute_pic = "green";
+         }
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2,  colour_of_new_commute_pic, 5, 0.1));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, colour_of_new_commute_pic, 5, 0.2));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  30, colour_of_new_commute_pic, 5, 0.3));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, colour_of_new_commute_pic, 5, 0.4));
+         circles.push(new CM.Circle(new CM.LatLng(lat,lon),  2,  colour_of_new_commute_pic, 5, 0.5));
          
          map.addOverlay(circles[0]);
          cacheObj['id' + id] = true;
@@ -160,7 +169,7 @@ function doIt(page) {
   $.when (doGet(page))
     .done(function() {
       if (++page <= num_pages) {
-        setTimeout(function() {doIt(page);},5000);
+        setTimeout(function() {doIt(page);},1000);
       }
     })
 };

@@ -58,7 +58,7 @@ function toggle_polygon(index,polygons,circles) {
     break;
   }
   if (current_index < 5) {
-    setTimeout(function () {toggle_polygon(current_index,polygons,circles);},500);
+    setTimeout(function () {toggle_polygon(current_index,polygons,circles);},250);
   }
 };
 
@@ -77,8 +77,7 @@ function plotPoints() {
   var datetaken = latlon[plot_index]["datetaken"];
   $('title').text("Roland's 2010 Commute Geotagged Photo taken:"+datetaken);
   $('#heading').text("Roland's 2010 Commute Geotagged Photo taken:"+datetaken);
-  polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 2, 0.5));
-  //polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 2, 0.5));
+  polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 3, 0.5));
   var circles = [];
   var colour_of_new_commute_pic = "orange";
   if (plot_index % 3 == 0) {
@@ -87,7 +86,7 @@ function plotPoints() {
   if (plot_index % 3 == 1) {
     colour_of_new_commute_pic = "green";
   }
-  circles.push(new CM.Circle(new CM.LatLng(lat,lon),  30,  colour_of_new_commute_pic, 5, 0.1));
+  circles.push(new CM.Circle(new CM.LatLng(lat,lon),  50,  colour_of_new_commute_pic, 5, 0.1));
   circles.push(new CM.Circle(new CM.LatLng(lat,lon),  22, colour_of_new_commute_pic, 5, 0.2));
   circles.push(new CM.Circle(new CM.LatLng(lat,lon),  15, colour_of_new_commute_pic, 5, 0.3));
   circles.push(new CM.Circle(new CM.LatLng(lat,lon),  10, colour_of_new_commute_pic, 5, 0.4));
@@ -104,13 +103,22 @@ function plotPoints() {
 
 var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
 var woeID = '9807';
+var dates = new Array();
+date_index = 0;
+dates[0] = {};
+dates[0]["min"] = new Date('January 1, 2010 0:00:00 am PST');
+dates[0]["max"] = new Date('May 1, 2010 11:59:59 pm PST');
+dates[1] = {};
+dates[1]["min"] = new Date('May 2, 2010 0:00:00 am PST');
+dates[1]["max"] = new Date('August 31, 2010 11:59:59 pm PST');
+dates[2] = {};
+dates[2]["min"] = new Date('September 1, 2010 0:00:00 am PST');
+dates[2]["max"] = new Date('December 31, 2010 11:59:59 pm PST');
 
-function getCommuterPhotoMetaData2nd6months(page) {
-  var min_d = new Date('July 1, 2010 0:00:00 am PST');
-  var min_s = Math.round(min_d.getTime() * 0.001);
+function getCommuterPhotoMetaData(date_index, page) {
+  var min_s = Math.round(dates[date_index]["min"].getTime() * 0.001);
   var min_str = min_s + '';
-  var max_d = new Date('December 31, 2010 11:59:59 pm PST');
-  var max_s = Math.round(max_d.getTime() * 0.001);
+  var max_s = Math.round(dates[date_index]["max"].getTime() * 0.001);
   var max_str = max_s + '';
 
   $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search"+
@@ -128,8 +136,8 @@ function getCommuterPhotoMetaData2nd6months(page) {
       total_pages = parseInt(flickrjs.photos.pages);
       total_photos = parseInt(flickrjs.photos.total);
     }
-    $('title').text("Roland's 2010 Commute 2nd 6 months Retrieving Page:"+page+" of:"+total_pages);
-    $('#heading').text("Roland's 2010 Commute 2nd 6 months: Retrieving Page:"+page+" of:"+total_pages);
+    $('title').text("Roland's 2010 Commute Date Index:"+date_index+" Retrieving Page:"+page+" of:"+total_pages);
+    $('#heading').text("Roland's 2010 Commute Date Index:"+date_index+" Retrieving Page:"+page+" of:"+total_pages);
 
     if (total_photos == 0) {
        console.log("No Roland's 2010 Commute photos:");
@@ -169,82 +177,16 @@ function getCommuterPhotoMetaData2nd6months(page) {
        }
      });
      if (page < total_pages) {
-       getCommuterPhotoMetaData2nd6months(page + 1);
+       getCommuterPhotoMetaData(date_index, page + 1);
      }
      else {
-       top();
-     }
-  }
-  });
-};
-function getCommuterPhotoMetaData1st6months(page) {
-  var min_d = new Date('January 1, 2010 0:00:00 am PST');
-  var min_s = Math.round(min_d.getTime() * 0.001);
-  var min_str = min_s + '';
-  var max_d = new Date('June 30, 2010 11:59:59 pm PST');
-  var max_s = Math.round(max_d.getTime() * 0.001);
-  var max_str = max_s + '';
-
-  $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search"+
-            "&user_id=35034347371@N01"+
-            "&api_key="+apiKey+
-            "&format=json&content_type=1&woe_id="+woeID+
-            "&per_page=250&min_taken_date="+min_str+
-            "&max_taken_date="+max_str+
-            "&tags=cameraphone"+
-            "&extras=date_taken,geo"+
-            "&page="+page+"&sort=date-taken-asc&jsoncallback=?",
-  function(flickrjs){ 
-    console.log('page:'+page)
-    if (page == 1) {
-      total_pages = parseInt(flickrjs.photos.pages);
-      total_photos = parseInt(flickrjs.photos.total);
-    }
-    $('title').text("Roland's 2010 Commute 1st 6 months Retrieving Page:"+page+" of:"+total_pages);
-    $('#heading').text("Roland's 2010 Commute 1st 6 months: Retrieving Page:"+page+" of:"+total_pages);
-
-    if (total_photos == 0) {
-       console.log("No Roland's 2010 Commute photos:");
-    }
-    else {
-     $.each(flickrjs.photos.photo,function(i,photo) {
-       var id = photo.id;
-       var lat = photo.latitude;
-       var lon = photo.longitude;
-       var datetaken = mysqlTimeStampToDate(photo.datetaken);
-       console.log("Datetaken:"+datetaken);
- 
-       var hourtaken = datetaken.getHours();
-       var dayofweek = datetaken.getDay();
-       var inCommuttingHours = false;
-       var mondayToFriday = false;
-       if (hourtaken >= 7 && hourtaken <= 10) {
-         inCommuttingHours = true;
+       date_index++;
+       if (date_index >= dates.length) {
+         top();
        }
-       if (hourtaken >= 14 && hourtaken <= 18) {
-         inCommuttingHours = true;
+       else {
+         getCommuterPhotoMetaData(date_index, 1);
        }
-       if (dayofweek >= 1 && dayofweek <= 5) {
-         mondayToFriday = true;
-       }
-       if (inCommuttingHours && mondayToFriday) {
-         console.log("photo:"+id+" not in cache; dayofweek:"+dayofweek+"; hourtaken:"+hourtaken);
-         var id = photo.id;
-         var lat = photo.latitude;
-         var lon = photo.longitude;
-         
-         latlon[latlon_index] = {};
-         latlon[latlon_index]["lat"] = lat;
-         latlon[latlon_index]["lon"] = lon;
-         latlon[latlon_index]["datetaken"] = photo.datetaken;
-         latlon_index++;
-       }
-     });
-     if (page < total_pages) {
-       getCommuterPhotoMetaData1st6months(page + 1);
-     }
-     else {
-       getCommuterPhotoMetaData2nd6months(1);
      }
   }
   });
@@ -279,7 +221,7 @@ function top() {
   plotPoints();
 };
 
-setTimeout(function() { getCommuterPhotoMetaData1st6months(1) }, 10000);
+setTimeout(function() { getCommuterPhotoMetaData(0, 1) }, 1000);
 
 })(jQuery);
 //]]></script>

@@ -74,6 +74,7 @@ function plotPoints() {
   var lon = latlon[plot_index]["lon"];
   var datetaken = latlon[plot_index]["datetaken"];
   $('title').text("Roland's 2010 Commute Geotagged Photo taken:"+datetaken);
+  $('#heading').text("Roland's 2010 Commute Geotagged Photo taken:"+datetaken);
   polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 2, 0.5));
   polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 2, 0.5));
   var circles = [];
@@ -92,10 +93,10 @@ function plotPoints() {
          
   map.addOverlay(circles[0]);
   
-  setTimeout(function () {toggle_polygon(0,polygons,circles);},200);
+  setTimeout(function () {toggle_polygon(0,polygons,circles);},20);
   plot_index++;
   if (plot_index < latlon.length) {
-    setTimeout(plotPoints,1000);
+    setTimeout(plotPoints,200);
   }
 };
 

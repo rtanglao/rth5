@@ -49,7 +49,7 @@ function drawCircle(x,y,radius,colour) {
 
 woeid_index_cache={};
 
-var noJoy_sound = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/no-joy.wav");
+// var noJoy_sound = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/no-joy.wav");
 var city_sound = [];
 city_sound[0] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/vancouver.wav");
 city_sound[1] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/sanfrancisco.wav");
@@ -133,7 +133,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
          console.log("NO geotagged PHOTOS for time:"+max_str+"name:"+
                      name+" uploaded in last 40 minutes"+
                      "status:"+flickrjs.stat);
-         noJoy_sound.play();
+         //noJoy_sound.play();
          if (woeid_index_cache[index] != null) {  
            context.fillStyle    = "white";
            context.fillRect(800, y, 960-800, 20);
@@ -199,7 +199,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
              }); // requestCrossDomain
            } // photoid_index
            else {
-             noJoy_sound.play();
+             //noJoy_sound.play();
              var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
              var y = row*32+16;
              drawCross(x, y, refresh_cycle % 2);

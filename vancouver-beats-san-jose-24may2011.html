@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Vancouver beats San Jose 24May2011</title>
+</head>
+<body>
+<div id="progressindicator">
+</div> 
+<div id="rt-wmh2010ghd" style="width: 1280px; height: 720px"></div>
+
+<script type="text/javascript"
+src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+var total_pages = 1;
+var latlon = new Array();
+var latlon_index = 0;
+var plot_index = 0;
+var total_photos = 0;
+
+var min_d = new Date('May 24, 2011 0:00:00 am PST');
+var min_s = Math.round(min_d.getTime() * 0.001);
+var min_str = min_s + '';
+var max_d = new Date('May 24, 2011 11:59:59 pm PST');
+var max_s = Math.round(max_d.getTime() * 0.001);
+var max_str = max_s + '';
+var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+var woeID = '9807';
+
+var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 25524});
+var map = new CM.Map('rt-wmh2010ghd', cloudmade);
+
+map.setCenter(new CM.LatLng(49.2777, -123.10875), 14); // Rogers Hockey Place
+// disable all scrolling and dragging
+map.disableDragging();
+map.disableMouseZoom();
+
+var sort_by = function(field, reverse, primer){
+
+   reverse = (reverse) ? -1 : 1;
+
+   return function(a,b){
+
+       a = a[field];
+       b = b[field];
+
+       if (typeof(primer) != 'undefined'){
+           a = primer(a);
+           b = primer(b);
+       }
+
+       if (a<b) return reverse * -1;
+       if (a>b) return reverse * 1;
+       return 0;
+
+   }
+};
+
+function top() {
+  $('title').text("Vancouver beats San Jose 24May2011: SORTING");
+  latlon.sort(sort_by('datetaken', false));
+  $('title').text("Vancouver beats San Jose 24May2011: PLOTTING");
+  plotPoints();
+};
+
+var toggle_funcs = new Array(6);
+toggle_funcs[1] = function (index,polygons,circles) {
+ map.addOverlay(circles[index - 1]);
+};
+
+var toggle234 = function(index,polygons,circles) {
+  map.removeOverlay(circles[index - 2]);
+  map.addOverlay(circles[index-1]);
+};
+
+toggle_funcs[2] = toggle234;
+toggle_funcs[3] = toggle234;
+toggle_funcs[4] = toggle234;
+
+toggle_funcs[5] = function(index, polygons,circles) {
+  map.removeOverlay(circles[index - 2]);
+  map.addOverlay(polygons[(index - 2) % 2]);
+};
+
+var toggle_default = function(index, polygons,circles) {
+  map.removeOverlay(polygons[(index - 1) % 2]);
+  map.addOverlay(polygons[index % 2]);
+};
+
+function toggle_polygon(index,polygons,circles) {
+
+  var timeout;
+  ++index;
+  if (index == 1) {
+    timeout = 1000;
+  }
+  else {
+    timeout = 500;
+  }
+  if (index < 6) {
+    toggle_funcs[index](index, polygons, circles);
+  }
+  else {
+    toggle_default(index, polygons, circles);
+  }
+  if (index < 7) {
+    setTimeout(function () {toggle_polygon(index,polygons,circles);},timeout);
+  }
+};
+
+function plotPoints() {
+  var lat = latlon[plot_index]["lat"];
+  var lon = latlon[plot_index]["lon"];
+  var datetaken = latlon[plot_index]["datetaken"];
+  $('title').text("Vancouver beats San Jose 24May2011 Geotagged Photo:"+datetaken);
+
+  console.log("Mapping Point:Latitude:"+lat+" Longitude:"+lon+" Taken:"+datetaken);
+
+  setTimeout(function () {
+    var polygons = [];
+    polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "forestgreen", 8, 0.5));
+    polygons.push(new CM.Polygon([new CM.LatLng(lat,lon)],  "red", 8, 0.5));
+    var circles = [];
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  40, "blue", 5, 0.1));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  25, "darkgreen", 5, 0.2));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  22, "darkgreen", 5, 0.3));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  19, "darkgreen", 5, 0.4));
+    circles.push(new CM.Circle(new CM.LatLng(lat,lon),  15, "darkgreen", 5,0.5));
+    toggle_polygon(0,polygons,circles);
+   },500);
+
+  plot_index++;
+  if (plot_index < latlon.length) {
+    setTimeout(plotPoints,250);
+  }
+};
+
+function getLatLon(page) {
+  var page_str = page + '';
+ $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=250&min_taken_date="+min_str+
+            "&extras=geo,date_taken"+
+            "&max_taken_date="+max_str+
+            "&page="+page_str+"&sort=date-taken-asc&jsoncallback=?",
+    function(flickrjs) { //flickrjs is the JSON object from flickr
+      console.log('page:'+page)
+      if (page == 1) {
+        total_pages = parseInt(flickrjs.photos.pages);
+        total_photos = parseInt(flickrjs.photos.total);
+      }
+      $('title').text("Vancouver beats San Jose 24May2011 Retrieving Page:"+page_str+" of:"+total_pages);
+
+      console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
+      if (total_photos == 0) {
+         console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
+      }
+      else {
+        $.each(flickrjs.photos.photo,function(i,photo) {
+          var id = photo.id;
+          var lat = photo.latitude;
+          var lon = photo.longitude;
+          var owner = photo.owner;
+          
+          latlon[latlon_index] = {};
+          latlon[latlon_index]["lat"] = lat;
+          latlon[latlon_index]["lon"] = lon;
+          latlon[latlon_index]["datetaken"] = photo.datetaken;
+          latlon_index++;
+        });
+        if (page < total_pages) {
+          getLatLon(page + 1);
+        }
+        else {
+          top();
+        }
+      } 
+    });
+};
+
+getLatLon(1);
+
+})(jQuery);
+//]]></script>
+
+</body>

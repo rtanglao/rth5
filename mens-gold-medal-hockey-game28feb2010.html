@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>2010 Men's Gold Medal Hockey Day Geotagged Pics</title>
+</head>
+<body>
+<div id="progressindicator">
+</div> 
+<div id="cm-example" style="width: 800px; height: 600px"></div>
+
+<script type="text/javascript"
+src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+var total_pages = 1;
+var latlon = new Array();
+var latlon_index = 0;
+var plot_index = 0;
+var total_photos = 0;
+
+var cloudmade = new CM.Tiles.CloudMade.Web({key: 'ccfc587e00ca40458db437d57437f5cf',styleId: 22405});
+var map = new CM.Map('cm-example', cloudmade);
+
+// set centre to be Vancouver Centroid from Flickr:
+//http://www.flickr.com/places/info/9807
+map.setCenter(new CM.LatLng(49.2604, -123.1140), 13);
+
+function top() {
+  plotPoints();
+};
+function plotPoints() {
+  lat = latlon[plot_index]["lat"];
+  lon = latlon[plot_index]["lon"];
+  var polygon;
+  if ((plot_index % 2) == 1) {
+    polygon = new CM.Polygon([new CM.LatLng(lat,lon)], "#FF0000", 3, 0.5);
+  }
+  else {
+    polygon = new CM.Polygon([new CM.LatLng(lat,lon)], "#FFFF00", 3, 0.5);
+  }
+
+  console.log("Mapping Point:Latitude:"+lat+" Longitude:"+lon);
+  map.addOverlay(polygon);
+  plot_index++;
+  if (plot_index < latlon.length) {
+    setTimeout(plotPoints,35);
+  }
+};
+
+function getLatLon(page) {
+  var min_d = new Date('February 28, 2010 0:00:00 am PST');
+  var min_s = Math.round(min_d.getTime() * 0.001);
+  var min_str = min_s + '';
+  var max_d = new Date('February 28, 2010 11:59:59 pm PST');
+  var max_s = Math.round(max_d.getTime() * 0.001);
+  var max_str = max_s + '';
+  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  var woeID = '9807';
+  var page_str = page + '';
+  $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=250&min_taken_date="+min_str+
+            "&extras=geo"+
+            "&max_taken_date="+max_str+
+            "&page="+page_str+"&sort=date-posted-asc&jsoncallback=?",
+    function(flickrjs) { //flickrjs is the JSON object from flickr
+     console.log('page:'+page)
+      //console.log(flickrjs);
+      if (page == 1) {
+        total_pages = parseInt(flickrjs.photos.pages);
+        total_photos = parseInt(flickrjs.photos.total);
+      }
+      console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
+      if (total_photos == 0) {
+         console.log("Total Photos:"+total_photos+" Total pages:"+total_pages+" status:"+flickrjs.stat);
+      }
+      else {
+        $.each(flickrjs.photos.photo,function(i,photo) {
+          var id = photo.id;
+          var lat = photo.latitude;
+          var lon = photo.longitude;
+          var owner = photo.owner;
+          //console.log("owner:"+owner+" id:"+id+" Latitude:"+lat+" Longitude:"+ lon);
+          latlon[latlon_index] = {};
+          latlon[latlon_index]["lat"] = lat;
+          latlon[latlon_index]["lon"] = lon;
+          latlon_index++;
+        });
+        if (page < total_pages) {
+          getLatLon(page + 1);
+        }
+        else {
+          top();
+        }
+      } 
+    });
+};
+
+getLatLon(1);
+
+})(jQuery);
+//]]></script>
+
+</body>

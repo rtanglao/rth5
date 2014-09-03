@@ -182,7 +182,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
     drawCircle(800+6*name.length+56,y+7,4,circle_color);
   }
   
-  $.getJSON("http://api.flickr.com//services/rest/?method=flickr.photos.search"+
+  $.getJSON("https://api.flickr.com//services/rest/?method=flickr.photos.search"+
             "&api_key="+apiKey+
             "&format=json&content_type=1&woe_id="+woeID+
             "&per_page=250&min_upload_date="+min_str+

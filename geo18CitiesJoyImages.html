@@ -233,6 +233,9 @@ function getPhotos(woeID,row,name,refresh_cycle) {
            }
            context.fillText(name+" "+hh+":"+mm+":"+ss+"#pics:"+woeid_index_cache[index]["id_array"].length,800,y);
            drawCircle(800+6*name.length+100,y+7,4,circle_color);
+           var x_cross = ((woeid_index_cache[index]["x"] % 10) * 75);
+           var y_cross = row * 75 +16;
+           drawCross(x_cross, y_cross, refresh_cycle % 2);
          }
       }
       else {

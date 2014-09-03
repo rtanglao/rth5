@@ -306,7 +306,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
             drawCircle(x,y,16,random_rgb_str);
            } // photoid_index
            else {
-             if (Math.floor(Math.random()*10) > 8) {
+             if (Math.floor(Math.random()*50) > 49) {
                joy_sound[Math.floor(Math.random()*64)].play();
              }
              var x = ((woeid_index_cache[index]["x"] % 10) * 75) + 90;

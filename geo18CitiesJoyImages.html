@@ -20,11 +20,14 @@ var drawingCanvas = document.getElementById('myDrawing');
 var context = drawingCanvas.getContext('2d');
 
 function drawCross(x,y,color_index) {
-  if (color_index )  {
-    context.strokeStyle = "red"; 
+  if (color_index div 3)  {
+    context.strokeStyle = "darkgreen"; 
+  }
+  else if (color_index div 2 {
+    context.strokeStyle = "yellow";
   }
   else {
-    context.strokeStyle = "blue";
+    context.strokeStyle = "darkred";
   }
   context.beginPath();
   context.moveTo(x-8, y);

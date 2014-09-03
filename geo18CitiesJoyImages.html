@@ -268,7 +268,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
              }
              var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
              var y = row*32+16;
-             //drawCross(x, y, refresh_cycle % 2);
+             drawCross(x, y, refresh_cycle % 2);
            } // photoid_index
         }); // each flickrjs.photos.photo
       } 

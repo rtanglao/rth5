@@ -283,7 +283,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
              if (Math.floor(Math.random()*4) > 2) {
                joy_sound[Math.floor(Math.random()*64)].play();
              }
-             var x = ((woeid_index_cache[index]["x"] % 18) * 75) + 75;
+             var x = ((woeid_index_cache[index]["x"] % 18) * 75) + 90;
              var y = row * 75 +16;
              drawCross(x, y, refresh_cycle % 2);
            } // photoid_index

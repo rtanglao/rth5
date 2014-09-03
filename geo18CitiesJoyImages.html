@@ -21,10 +21,10 @@ var context = drawingCanvas.getContext('2d');
 
 function drawCross(x,y,color_index) {
   if (color_index )  {
-    context.strokeStyle = "#FF00CC"; // "pink";
+    context.strokeStyle = "red"; 
   }
   else {
-    context.strokeStyle = "#3300CC"; // bright blue
+    context.strokeStyle = "blue";
   }
   context.beginPath();
   context.moveTo(x-8, y);

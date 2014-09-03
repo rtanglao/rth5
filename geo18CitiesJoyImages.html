@@ -19,6 +19,23 @@ if (typeof console === 'undefined' || !console.log) {
 var drawingCanvas = document.getElementById('myDrawing');
 var context = drawingCanvas.getContext('2d');
 
+function drawCross(x,y,color_index) {
+  if (color_index )  {
+    context.strokeStyle = "#FF00CC"; // "pink";
+  }
+  else {
+    context.strokeStyle = "#3300CC"; // bright blue
+  }
+  context.beginPath();
+  context.moveTo(x-8, y);
+  context.lineTo(x+8,y)
+  context.stroke();
+  context.beginPath();
+  context.moveTo(x, y-8);
+  context.lineTo(x,y+8);
+  context.stroke();
+};
+
 function drawFlickrPhoto(x,y,photo_url) {
   console.log("x:"+x+" y:"+y+" photo_url:"+photo_url);
   y = y - 16;

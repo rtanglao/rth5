@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>18 Cities Real Time Geo flickr with Joyful Sounds</title>
+</head>
+<body>
+<canvas id="myDrawing" width="960" height="600">
+			<p>Your browser doesn't support canvas.</p>
+		</canvas>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript">//<![CDATA[
+(function($){
+  $.ajaxSetup({
+    cache: false // turn off AJAX caching
+  });
+if (typeof console === 'undefined' || !console.log) {
+  var console = { log: function () {}};
+};
+var drawingCanvas = document.getElementById('myDrawing');
+var context = drawingCanvas.getContext('2d');
+
+function drawFlickrPhoto(x,y,photo_url) {
+  console.log("x:"+x+" y:"+y+" photo_url:"+photo_url);
+  
+  var img = new Image(); 
+  //get the pic URL
+  img.src = photo_url;
+
+  // When the image is done loading this will execute
+  img.onload = function() {
+    console.log(img);
+    // Draw slice
+    context.drawImage(img, x, y);
+    // Draw frame
+    //ctx.drawImage(document.getElementById('frame'),132,150);
+  }
+}
+
+
+function drawCircle(x,y,radius,colour) {
+  console.log("x:"+x+" y:"+y+" radius:"+radius+" colour:"+colour);
+  context.strokeStyle = "#000000";
+  context.fillStyle = colour;
+  context.beginPath();
+  context.arc(x,y,radius,0,Math.PI*2,true);
+  context.closePath();
+  context.stroke();
+  context.fill();
+};
+
+woeid_index_cache={};
+
+var joy_sound = [];
+joy_sound[0] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/keine-Photos.wav");
+joy_sound[1] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/Walang-Photos.wav");
+joy_sound[2] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/Could-somebody-please-tag-geotagged-photos.wav");
+joy_sound[3] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/Pas-de-photos.wav");
+joy_sound[4] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/no-photos-old-bean.wav");
+joy_sound[5] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/silence.wav");
+joy_sound[6] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/ruhe.wav");
+joy_sound[7] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/hush.wav");
+joy_sound[8] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/shhh.wav");
+joy_sound[9] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[10] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[11] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[12] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[13] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[14] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[15] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[16] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[17] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[18] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[19] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[20] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[21] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[22] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[23] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[24] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[25] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[26] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[27] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[28] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[29] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[30] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[31] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[32] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[33] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[34] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[35] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[36] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[37] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[38] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[39] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[40] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[41] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[42] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[43] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[44] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[45] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[46] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[47] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[48] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[49] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[50] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[51] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[52] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[53] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[54] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[55] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[56] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[57] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[58] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[59] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[60] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[61] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[62] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[63] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+var city_sound = [];
+city_sound[0] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/vancouver.wav");
+city_sound[1] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/sanfrancisco.wav");
+city_sound[2] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/nyc.wav");
+city_sound[3] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/amsterdam.wav");
+city_sound[4] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/portland.wav");
+city_sound[5] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/berlin.wav");
+city_sound[6] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/paris.wav");
+city_sound[7] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/london.wav");
+city_sound[8] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/taipei.wav");
+city_sound[9] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/beijing.wav");
+city_sound[10] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/shanghai.wav");
+city_sound[11] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/beijing.wav");
+city_sound[12] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/rio.wav");
+city_sound[13] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/toronto.wav");
+city_sound[14] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/chicago.wav");
+city_sound[15] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/seattle.wav");
+city_sound[16] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/tokyo.wav");
+city_sound[17] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/montreal.wav");
+
+function getPhotos(woeID,row,name,refresh_cycle) {
+
+  var y = row*75+16;
+  var max_d = new Date();
+  var index = 'id'+woeID;
+  var max_s = Math.round(max_d.getTime() * 0.001);
+  var max_str = max_s + '';
+  var min_d = max_s - (60 * 15); // 15 minutes ago
+  var min_str = min_d + '';
+  var apiKey = 'a3b9e1fec66dfb1797c7414dfbb81974';
+  var hh,mm,ss;
+  var h = max_d.getHours();
+  if (h<10) { 
+    hh = "0"+h;
+  }
+  else {
+    hh = h + "";
+  }
+  var m =max_d.getMinutes();
+  if (m<10) { 
+    mm = "0"+m;
+  }
+  else {
+    mm = m + "";
+  }
+  var s =max_d.getSeconds();
+  if (s<10) { 
+    ss = "0"+s;
+  }
+  else {
+    ss = s + "";
+  }
+  if (woeid_index_cache[index] == null) {    
+    context.fillStyle    = "white";
+    context.fillRect(800, y, 960-800, 20);
+    context.textBaseline = "top";
+    var circle_color;
+    if (refresh_cycle % 2) {
+      context.fillStyle    = 'black';
+      circle_color = 'black';
+    }
+    else {
+      context.fillStyle    = 'red';
+      circle_color = 'red';
+    }
+    context.fillText(name+" "+hh+":"+mm+":"+ss,800,y);
+    drawCircle(800+6*name.length+56,y+7,4,circle_color);
+  }
+  
+  $.getJSON("https://api.flickr.com//services/rest/?method=flickr.photos.search"+
+            "&api_key="+apiKey+
+            "&format=json&content_type=1&woe_id="+woeID+
+            "&per_page=250&min_upload_date="+min_str+
+            "&extras=geo,url_sq,date_upload"+
+            "&max_upload_date="+max_str+
+            "&page=1"+"&sort=date-posted-asc&jsoncallback=?",
+    function(flickrjs) { //flickrjs is the JSON object from flickr
+      total_photos = parseInt(flickrjs.photos.total);
+      console.log("Total Photos:"+total_photos);
+      if (total_photos == 0) {
+         console.log("NO geotagged PHOTOS for time:"+max_str+"name:"+
+                     name+" uploaded in last 40 minutes"+
+                     "status:"+flickrjs.stat);
+         if (Math.floor(Math.random()*4) > 2) {
+           joy_sound[Math.floor(Math.random()*64)].play();
+         }
+         if (woeid_index_cache[index] != null) {  
+           context.fillStyle    = "white";
+           context.fillRect(800, y, 960-800, 20);
+           context.textBaseline = "top";
+           if (refresh_cycle % 2) {
+             context.fillStyle    = 'green';
+             circle_color = 'green';
+           }
+           else {
+             context.fillStyle    = 'orange';
+             circle_color = 'orange';
+           }
+           context.fillText(name+" "+hh+":"+mm+":"+ss+"#pics:"+woeid_index_cache[index]["id_array"].length,800,y);
+           drawCircle(800+6*name.length+100,y+7,4,circle_color);
+         }
+      }
+      else {
+        $.each(flickrjs.photos.photo,function(i,photo) {
+          var id = photo.id;
+          var photo_url = photo.url_sq;
+          var dateupload = photo.dateupload;
+          var lon = photo.longitude;
+          var hours = new Date(parseInt(dateupload) * 1000).getHours();
+          console.log("name:"+name+ " id:"+id+" Date Uploaded"+dateupload+" hours:"+hours+" url:"+photo_url);
+          if (woeid_index_cache[index] == null) {
+            woeid_index_cache[index] = {};
+            woeid_index_cache[index]["x"] = -1;
+            woeid_index_cache[index]["id_array"] = [];
+          }
+          var photoid_index = woeid_index_cache[index]["id_array"].indexOf(id);
+          if (photoid_index == -1) {
+            city_sound[row].play();
+            woeid_index_cache[index]["x"]++;
+            woeid_index_cache[index]["id_array"].push(id);
+            var x = ((woeid_index_cache[index]["x"] % 10) * 75) + 16;
+            var y = row*75+16;
+            var rgb_str;
+            if (refresh_cycle % 2) {
+              rgb_str = "#FF00CC";
+            }
+            else {
+              rgb_str = "#3300CC";
+            }
+            drawFlickrPhoto(x,y,photo_url)
+            //drawCircle(x,y,16,rgb_str);
+            context.fillStyle    = rgb_str;
+            context.fillRect(800, y, 960-800, 20);
+            context.strokeStyle    = "#ffffff";
+            context.textBaseline = "top";
+            context.strokeText(name+" "+hh+":"+mm+":"+ss+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
+
+            var random_rgb_str = "#"+Math.floor(Math.random()*16777216).toString(16)
+            console.log("Random colour:"+random_rgb_str);
+            context.fillStyle    = random_rgb_str;
+            context.fillRect(800, y, 960-800, 20);
+            context.strokeStyle    = "#ffffff";
+            context.textBaseline = "top";
+            context.strokeText(name+" "+hh+":"+mm+":"+ss+" #pics:"+woeid_index_cache[index]["id_array"].length,800,y);
+            drawCircle(x,y,16,random_rgb_str);
+           } // photoid_index
+           else {
+             if (Math.floor(Math.random()*4) > 2) {
+               joy_sound[Math.floor(Math.random()*64)].play();
+             }
+             var x = ((woeid_index_cache[index]["x"] % 24) * 32) + 16;
+             var y = row*32+16;
+             drawCross(x, y, refresh_cycle % 2);
+           } // photoid_index
+        }); // each flickrjs.photos.photo
+      } 
+    }); // getJSON
+  setTimeout(function () {getPhotos(woeID,row,name,++refresh_cycle);}, 1000*2);
+};
+function get18CitiesPhotos() {
+    getPhotos("9807",0,"Vancouver",0);
+    getPhotos("2487956",1,"San Francisco",1);
+    getPhotos("2459115",2,"NYC",2);
+    getPhotos("727232",3,"Amsterdam",3);
+    getPhotos("2475687",4,"Portland,OR",4);
+    getPhotos("2345496",5,"Berlin",5);
+    getPhotos("615702",6,"Paris",6);
+    getPhotos("44418",7,"London",7);
+    getPhotos("20070333", 8,"Taipei",8);
+    getPhotos("2151330", 9,"Beijing",9);
+    getPhotos("2151849", 10,"Shanghai",10);
+    getPhotos("12581062", 11,"Rio de Janeiro",11);
+    getPhotos("29375205",12,"Toronto",12);
+    getPhotos("2379574",13,"Chicago",13);
+    getPhotos("2490383",14,"Seattle",14);
+    getPhotos("2442047",15,"Los Angeles",15);
+    getPhotos("1118370",16,"Tokyo",16);
+    getPhotos("3534",17,"Montr\xE9al",17);
+};
+
+get18CitiesPhotos();
+
+})(jQuery);
+//]]></script>
+
+</body>
+</html>

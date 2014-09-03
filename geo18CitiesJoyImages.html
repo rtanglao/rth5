@@ -152,6 +152,16 @@ joy_sound[76] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-sil
 joy_sound[77] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
 joy_sound[78] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
 joy_sound[79] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/total-silence1.wav");
+joy_sound[80] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_alchemysweep.wav"];
+joy_sound[81] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_cannon.wav"];
+joy_sound[82] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_crash.wav"];
+joy_sound[83] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_cyberlite.wav"];
+joy_sound[84] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_drunklfo2.wav"];
+joy_sound[85] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_scoop.wav"];
+joy_sound[86] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_sillythings.wav"];
+joy_sound[87] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_simplenoiser.wav"];
+joy_sound[88] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_tapestop.wav"];
+joy_sound[89] = new Audio["https://dl.dropboxusercontent.com/u/361757/SOUNDS/avg18/SYNTH/ROLAND-JUPITER8/wa_free_jp8fx_technotone.wav"];
 var city_sound = [];
 city_sound[0] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/vancouver.wav");
 city_sound[1] = new Audio("http://dl.dropbox.com/u/361757/SOUNDS/avg18/sanfrancisco.wav");
@@ -235,8 +245,8 @@ function getPhotos(woeID,row,name,refresh_cycle) {
          console.log("NO geotagged PHOTOS for time:"+max_str+"name:"+
                      name+" uploaded in last 40 minutes"+
                      "status:"+flickrjs.stat);
-         if (Math.floor(Math.random()*4) > 2) {
-           joy_sound[Math.floor(Math.random()*80)].play();
+         if (Math.floor(Math.random()*50) > 48) {
+           joy_sound[Math.floor(Math.random()*90)].play();
          }
          var x_cross;
          var y_cross = row * 75 +16;

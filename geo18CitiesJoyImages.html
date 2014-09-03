@@ -24,14 +24,14 @@ function drawCross(x,y,color_index) {
     context.strokeStyle = "darkgreen"; 
   }
   else if ((color_index % 2) == 0) {
-    context.strokeStyle = "yellow";
+    context.strokeStyle = "darkyellow";
   }
   else {
     context.strokeStyle = "darkred";
   }
   context.beginPath();
-  context.moveTo(x-8, y);
-  context.lineTo(x+8,y)
+  context.moveTo(x-16, y);
+  context.lineTo(x+16,y)
   context.stroke();
   context.beginPath();
   context.moveTo(x, y-8);
@@ -242,7 +242,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
            drawCross(x_cross, y_cross, refresh_cycle);
          }
          else {
-            drawCross(75/2, y_cross, refresh_cycle);
+            drawCross(75/2, y_cross, refresh_cycles);
          }       
       }
       else {
@@ -295,7 +295,7 @@ function getPhotos(woeID,row,name,refresh_cycle) {
              }
              var x = ((woeid_index_cache[index]["x"] % 10) * 75) + 90;
              var y = row * 75 +16;
-             drawCross(x, y, refresh_cycle % 2);
+             drawCross(x, y, refresh_cycle);
            } // photoid_index
         }); // each flickrjs.photos.photo
       } 
